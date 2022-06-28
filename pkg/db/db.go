@@ -21,7 +21,7 @@ var connection *sql.DB
 
 func GetConnection() *sql.DB {
 	if connection == nil {
-		connection, _ = sql.Open("pgx", "host=database-1.cwd3pnzyxmeg.ap-southeast-3.rds.amazonaws.com port=5432 dbname=connect_db user=ironman password=Habibie123!")
+		connection, _ = sql.Open("pgx", "DATABASE_ACCESS") // DATABASE_ACCESS is a secret do not use it for your program
 	}
 	return connection
 }
