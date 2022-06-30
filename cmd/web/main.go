@@ -99,12 +99,42 @@ func main() {
 
 	http.HandleFunc("/editprofil", profile.EditProfilePost)
 
+	http.HandleFunc("/getquiz" , func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		i, _ := strconv.Atoi(r.FormValue("id"))
+		w.WriteHeader(http.StatusOK)
+		l.Println(i)
+		fmt.Println(i)
+		js, err := json.MarshalIndent(db.GetSoal(db.GetConnection(), (i+1)), "", "    ")
+		if err != nil {
+			l.Println(err)
+		}
+		w.Write(js)
+	})
+
+	http.HandleFunc("/getworks", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		i, _ := strconv.Atoi(r.FormValue("id"))
+		var users Hasils
+		for idx := range db.GetAllQuiz(db.GetConnection(), strconv.Itoa((i+1)))[0] {
+			users = append(users, Hasil{Name: db.GetAllQuiz(db.GetConnection(), strconv.Itoa(i+1))[0][idx], Nilai: db.GetAllQuiz(db.GetConnection(), strconv.Itoa(i+1))[1][idx]})
+		}
+		js, err := json.MarshalIndent(users, "", "    ")
+		if err != nil {
+			l.Println(err)
+		}
+		w.Write(js)
+	})
+
 	for i := range db.GetAllRowsPelatihan(db.GetConnection())[0] {
-		http.HandleFunc(fmt.Sprintf("/getworks%d", i), func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(i)
+		worknewstr := fmt.Sprintf("/getworks%d", i)
+		http.HandleFunc(worknewstr, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			var users Hasils
-			for idx := range db.GetAllQuiz(db.GetConnection(), strconv.Itoa(i+1))[0] {
+			for idx := range db.GetAllQuiz(db.GetConnection(), strconv.Itoa((i+1)))[0] {
 				users = append(users, Hasil{Name: db.GetAllQuiz(db.GetConnection(), strconv.Itoa(i+1))[0][idx], Nilai: db.GetAllQuiz(db.GetConnection(), strconv.Itoa(i+1))[1][idx]})
 			}
 			js, err := json.MarshalIndent(users, "", "    ")
@@ -113,11 +143,14 @@ func main() {
 			}
 			w.Write(js)
 		})
-
-		http.HandleFunc(fmt.Sprintf("/getquiz%d", i), func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(("/getquiz" + strconv.Itoa(i)))
+		quiznewstr := fmt.Sprintf("/getquiz%d", i)
+		http.HandleFunc(quiznewstr, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			js, err := json.MarshalIndent(db.GetSoal(db.GetConnection(), i+1), "", "    ")
+			l.Println(i)
+			fmt.Println(i)
+			js, err := json.MarshalIndent(db.GetSoal(db.GetConnection(), (i+1)), "", "    ")
 			if err != nil {
 				l.Println(err)
 			}
