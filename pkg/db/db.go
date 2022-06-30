@@ -13,15 +13,15 @@ import (
 )
 
 var (
-    outfile, _ = os.Create("logs2.log")
-    l      = log.New(outfile, "", 0)
+	outfile, _ = os.Create("logs2.log")
+	l          = log.New(outfile, "", 0)
 )
 
 var connection *sql.DB
 
 func GetConnection() *sql.DB {
 	if connection == nil {
-		connection, _ = sql.Open("pgx", "DATABASE_ACCESS") // DATABASE_ACCESS is a secret do not use it for your program
+		connection, _ = sql.Open("pgx", "host=database-1.cwd3pnzyxmeg.ap-southeast-3.rds.amazonaws.com port=5432 dbname=connect_db user=ironman password=Habibie123!")
 	}
 	return connection
 }
@@ -40,15 +40,15 @@ func InsertDoneQuiz(user_id string, nilai int, pelatihan_id int, conn *sql.DB) {
 	errhandler.HandErr(err2)
 }
 
-func InsertJawaban(user_id string, soalid int , jawaban string, pelatihan_id int, conn *sql.DB) {
+func InsertJawaban(user_id string, soalid int, jawaban string, pelatihan_id int, conn *sql.DB) {
 	query := `insert into jawabanuser (pelatihan_id, user_id, idsoal, jawabanUser) values ($1, $2, $3, $4)`
-	_, err2 := conn.Exec(query, pelatihan_id,user_id, soalid, jawaban)
+	_, err2 := conn.Exec(query, pelatihan_id, user_id, soalid, jawaban)
 
 	errhandler.HandErr(err2)
 }
 
-func GetJawaban(conn *sql.DB, pelatihanid int,userid string) []string {
-	rows, err := conn.Query("select idsoal,jawabanUser from jawabanuser where pelatihan_id = " + strconv.Itoa(pelatihanid) + ", user_id = '" + userid+"'")
+func GetJawaban(conn *sql.DB, pelatihanid int, userid string) []string {
+	rows, err := conn.Query("select idsoal,jawabanUser from jawabanuser where pelatihan_id = " + strconv.Itoa(pelatihanid) + ", user_id = '" + userid + "'")
 	errhandler.HandErr(err)
 	defer rows.Close()
 	var idsoal int
